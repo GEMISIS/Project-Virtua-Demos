@@ -6,8 +6,6 @@
 #include "pvmm/MidOpenGL.h"
 #include "ObjectLoader.h"
 
-#include "btBulletDynamicsCommon.h"
-
 using namespace PV;
 
 ObjectModel* landModel;
@@ -23,7 +21,7 @@ void initQuad()
 	rightHandModel = new ObjectModel("arm.obj");
 }
 
-void handleInput(OculusRift* rift, Kinect1* kinect, Math::vec3 &position, Math::vec3 &rotation, btRigidBody* rightHandRigidBody, btRigidBody* leftHandRigidBody)
+void handleInput(OculusRift* rift, Kinect1* kinect, Math::vec3 &position, Math::vec3 &rotation)
 {
 	if (rift->isConnected())
 	{
@@ -42,19 +40,6 @@ void handleInput(OculusRift* rift, Kinect1* kinect, Math::vec3 &position, Math::
 			position.y = -skeleton.SkeletonPositions[NUI_SKELETON_POSITION_HEAD].y;
 		}
 		position.z = -skeleton.Position.z;
-
-		if (skeleton.eSkeletonPositionTrackingState[NUI_SKELETON_POSITION_HAND_LEFT] == NUI_SKELETON_POSITION_TRACKED)
-		{
-			leftHandRigidBody->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(skeleton.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].x,
-				skeleton.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].y,
-				skeleton.SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT].z)));
-		}
-		if (skeleton.eSkeletonPositionTrackingState[NUI_SKELETON_POSITION_HAND_RIGHT] == NUI_SKELETON_POSITION_TRACKED)
-		{
-			rightHandRigidBody->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(skeleton.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].x,
-				skeleton.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].y,
-				skeleton.SkeletonPositions[NUI_SKELETON_POSITION_HAND_RIGHT].z)));
-		}
 	}
 
 	if ((1 << 16) & GetAsyncKeyState(VK_LEFT))
@@ -78,21 +63,10 @@ void handleInput(OculusRift* rift, Kinect1* kinect, Math::vec3 &position, Math::
 
 }
 
-void drawGLScene(unsigned int program, Math::Matrix<float> perspectiveMatrix, Math::Matrix<float> viewMatrix,
-	btRigidBody* ground, btRigidBody* ball, btRigidBody* leftHand, btRigidBody* rightHand)
+void drawGLScene(unsigned int program, Math::Matrix<float> perspectiveMatrix, Math::Matrix<float> viewMatrix)
 {
-	btTransform trans;
-	ground->getMotionState()->getWorldTransform(trans);
-
-	btScalar* scalar = new btScalar[16];
-	trans.getOpenGLMatrix(scalar);
-
-	Math::Matrix<float> modelMatrix(4, 4);
-	modelMatrix = scalar;
-	delete scalar;
-
 	pv_glUseProgram(program);
-	Math::Matrix<float> mvp = perspectiveMatrix * viewMatrix * modelMatrix;
+	Math::Matrix<float> mvp = perspectiveMatrix * viewMatrix;
 	unsigned int mvpLocation = pv_glGetUniformLocation(program, "mvp");
 	pv_glUniformMatrix4fv(mvpLocation, 1, false, mvp.getArray());
 
@@ -101,77 +75,33 @@ void drawGLScene(unsigned int program, Math::Matrix<float> perspectiveMatrix, Ma
 
 	landModel->Draw();
 
-	btScalar* scalar2 = new btScalar[16];
-	ball->getMotionState()->getWorldTransform(trans);
-	trans.getOpenGLMatrix(scalar2);
-	modelMatrix = scalar2;
-	delete scalar2;
-	mvp = perspectiveMatrix * viewMatrix * modelMatrix;
+	mvp = perspectiveMatrix * viewMatrix;
 	pv_glUniformMatrix4fv(mvpLocation, 1, false, mvp.getArray());
 	ballModel->Draw();
 
-	btScalar* scalar3 = new btScalar[16];
-	trans = leftHand->getWorldTransform();
-	trans.getOpenGLMatrix(scalar3);
-	modelMatrix = scalar3;
-	delete scalar3;
-	mvp = perspectiveMatrix * viewMatrix * modelMatrix;
+	mvp = perspectiveMatrix * viewMatrix;
 	pv_glUniformMatrix4fv(mvpLocation, 1, false, mvp.getArray());
 	leftHandModel->Draw();
 
-	btScalar* scalar4 = new btScalar[16];
-	trans = rightHand->getWorldTransform();
-	trans.getOpenGLMatrix(scalar4);
-	modelMatrix = scalar4;
-	delete scalar4;
-	mvp = perspectiveMatrix * viewMatrix * modelMatrix;
+	mvp = perspectiveMatrix * viewMatrix;
 	pv_glUniformMatrix4fv(mvpLocation, 1, false, mvp.getArray());
 	rightHandModel->Draw();
 }
 
 int main()
 {
-	btBroadphaseInterface* broadphase = new btDbvtBroadphase();
-	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
-	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
-	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
-	btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-	dynamicsWorld->setGravity(btVector3(0, -9.8f, 0));
-
-	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
-	btDefaultMotionState* groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -1, 0)));
-	btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
-	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
-
-	btCollisionShape* handShape = new btSphereShape(0.5f);
-	btDefaultMotionState* handMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 1, 0)));
-	btScalar handmass = 1;
-	btVector3 handInertia(0, 0, 0);
-	handShape->calculateLocalInertia(handmass, handInertia);
-	btRigidBody::btRigidBodyConstructionInfo handRigidBodyCI(0, handMotionState, handShape, handInertia);
-	btRigidBody* leftHandRigidBody = new btRigidBody(handRigidBodyCI);
-	btRigidBody* rightHandRigidBody = new btRigidBody(handRigidBodyCI);
-
-	btCollisionShape* ballShape = new btSphereShape(1);
-	btDefaultMotionState* ballMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 15, 1.0f)));
-	btScalar mass = 1;
-	btVector3 ballInertia(0, 0, 0);
-	ballShape->calculateLocalInertia(mass, ballInertia);
-	btRigidBody::btRigidBodyConstructionInfo ballRigidBodyCI(mass, ballMotionState, ballShape, ballInertia);
-	btRigidBody* ballRigidBody = new btRigidBody(ballRigidBodyCI);
-
 	Window testWindow;
 	Math::Matrix<float> perspectiveMatrix(4, 4);
 	Math::Matrix<float> viewMatrix(4, 4);
 	Math::Matrix<float> viewOffsetMatrix(4, 4);
 
-	Math::vec3 position = { 0, -2, -2.0f };
+	Math::vec3 position = { 0, -2, -8.0f };
 	Math::vec3 rotation = { 0, 0, 0 };
 
 	Kinect1* kinect = new Kinect1();
 	MSG msg;
 
-	testWindow.create(L"Project Virtua - Basic Room", true, NULL);
+	testWindow.create(L"Project Virtua - Basic Room");
 	testWindow.setWindowDrawingStateGL();
 	testWindow.setVisible(true);
 
@@ -179,7 +109,7 @@ int main()
 	wglSwapIntervalEXT(1);
 
 	glEnable(GL_LINE_SMOOTH);
-
+	glEnable(GL_DEPTH_TEST);
 
 	OculusRift rift(false, testWindow.renderingContext, testWindow.windowHandle, testWindow.deviceContext);
 
@@ -187,17 +117,10 @@ int main()
 	unsigned int program = createShaders("vertexShader.vs", "fragShader.fs");
 	createPerspectiveMatrix(perspectiveMatrix, 45.0f, 1280.0f / 800.0f, 0.1f, 1000.0f);
 
-	dynamicsWorld->addRigidBody(groundRigidBody);
-	dynamicsWorld->addRigidBody(ballRigidBody);
-	dynamicsWorld->addRigidBody(rightHandRigidBody);
-	dynamicsWorld->addRigidBody(leftHandRigidBody);
-
 	srand(time(NULL));
 
 	while (1)
 	{
-		dynamicsWorld->stepSimulation(1 / 60.f, 10);
-
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
@@ -211,16 +134,7 @@ int main()
 			}
 		}
 
-		if (abs(ballRigidBody->getWorldTransform().getOrigin().x()) > 80 || abs(ballRigidBody->getWorldTransform().getOrigin().z()) > 80)
-		{
-			ballRigidBody->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(-10.0f + (rand() % 20), 15, -10.0f + (rand() % 20))));
-		}
-		if ((1 << 16) & GetAsyncKeyState(VK_SPACE))
-		{
-			ballRigidBody->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(-10.0f + (rand() % 20), 15, -10.0f + (rand() % 20))));
-		}
-
-		handleInput(&rift, kinect, position, rotation, leftHandRigidBody, rightHandRigidBody);
+		handleInput(&rift, kinect, position, rotation);
 		createLookAtMatrix(viewMatrix, position, rotation);
 
 		testWindow.MakeCurrentGLContext();
@@ -229,24 +143,27 @@ int main()
 			rift.StartEyeRender(Left, viewOffsetMatrix);
 			{
 				rift.getPerspectiveMatrix(Left, perspectiveMatrix);
-				drawGLScene(program, perspectiveMatrix, (viewOffsetMatrix * viewMatrix), groundRigidBody, ballRigidBody, leftHandRigidBody, rightHandRigidBody);
+				drawGLScene(program, perspectiveMatrix, (viewOffsetMatrix * viewMatrix));
 			}
 			rift.EndEyeRender(Left);
 
 			rift.StartEyeRender(Right, viewOffsetMatrix);
 			{
 				rift.getPerspectiveMatrix(Right, perspectiveMatrix);
-				drawGLScene(program, perspectiveMatrix, (viewOffsetMatrix * viewMatrix), groundRigidBody, ballRigidBody, leftHandRigidBody, rightHandRigidBody);
+				drawGLScene(program, perspectiveMatrix, (viewOffsetMatrix * viewMatrix));
 			}
 			rift.EndEyeRender(Right);
 
 			pv_glBindFramebuffer(PV_GL_FRAMEBUFFER, 0);
+			glDisable(GL_DEPTH_TEST);
 			rift.EndRender();
+			glEnable(GL_DEPTH_TEST);
+			glClearDepth(1);
 		}
 		else
 		{
 			pv_glBindFramebuffer(PV_GL_FRAMEBUFFER, 0);
-			drawGLScene(program, perspectiveMatrix, viewMatrix, groundRigidBody, ballRigidBody, leftHandRigidBody, rightHandRigidBody);
+			drawGLScene(program, perspectiveMatrix, viewMatrix);
 			testWindow.Update();
 		}
 	}
