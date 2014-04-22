@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Basic Room", "Basic Room\Basic Room.vcxproj", "{681B6A6C-5D22-4FFE-B459-6138D7138BAC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Holodeck", "Holodeck\Holodeck.vcxproj", "{3746D759-0EE8-447C-873B-D8E3069DDDE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{681B6A6C-5D22-4FFE-B459-6138D7138BAC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{681B6A6C-5D22-4FFE-B459-6138D7138BAC}.Debug|Win32.Build.0 = Debug|Win32
+		{681B6A6C-5D22-4FFE-B459-6138D7138BAC}.Release|Win32.ActiveCfg = Release|Win32
+		{681B6A6C-5D22-4FFE-B459-6138D7138BAC}.Release|Win32.Build.0 = Release|Win32
+		{3746D759-0EE8-447C-873B-D8E3069DDDE4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3746D759-0EE8-447C-873B-D8E3069DDDE4}.Debug|Win32.Build.0 = Debug|Win32
+		{3746D759-0EE8-447C-873B-D8E3069DDDE4}.Release|Win32.ActiveCfg = Release|Win32
+		{3746D759-0EE8-447C-873B-D8E3069DDDE4}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
