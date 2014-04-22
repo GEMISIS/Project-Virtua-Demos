@@ -16,3 +16,7 @@ Holodeck
 A demonstration of how to create a Holodeck like that from Star Trek.  This uses the Bullet physics engine for collisions, and can import .obj models and .bullet physics from blender.  It also uses the tiny object loader (https://github.com/syoyo/tinyobjloader/) and lodepng (http://lodev.org/lodepng) for handling models and png textures.
 ####Images
 ![Holodeck Demo](https://raw.githubusercontent.com/gemisis/Project-Virtua-Demos/master/Photos/Holodeck/pic1.png)
+####Videos
+######Holodec Demo 1
+<a href="https://www.youtube.com/watch?v=gZgUJTvzM50" target="_blank"><img src="http://img.youtube.com/vi/gZgUJTvzM50/0.jpg" style="float:center;" 
+alt="Youtube Demo 1" border="10" /></a>
