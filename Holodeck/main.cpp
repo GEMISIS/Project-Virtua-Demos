@@ -105,7 +105,7 @@ int main()
 	Kinect1* kinect = new Kinect1();
 	MSG msg;
 
-	testWindow.create(L"Project Virtua - Basic Room");
+	testWindow.create(L"Project Virtua - Holodeck");
 	testWindow.setWindowDrawingStateGL();
 	testWindow.setVisible(true);
 
