@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Basic Room", "Basic Room\Ba
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Holodeck", "Holodeck\Holodeck.vcxproj", "{3746D759-0EE8-447C-873B-D8E3069DDDE4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Basic Rift Only", "Basic Rift Only\Basic Rift Only.vcxproj", "{0B375BE9-97B8-4BF2-9C4F-0EADC963A80C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{3746D759-0EE8-447C-873B-D8E3069DDDE4}.Debug|Win32.Build.0 = Debug|Win32
 		{3746D759-0EE8-447C-873B-D8E3069DDDE4}.Release|Win32.ActiveCfg = Release|Win32
 		{3746D759-0EE8-447C-873B-D8E3069DDDE4}.Release|Win32.Build.0 = Release|Win32
+		{0B375BE9-97B8-4BF2-9C4F-0EADC963A80C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0B375BE9-97B8-4BF2-9C4F-0EADC963A80C}.Debug|Win32.Build.0 = Debug|Win32
+		{0B375BE9-97B8-4BF2-9C4F-0EADC963A80C}.Release|Win32.ActiveCfg = Release|Win32
+		{0B375BE9-97B8-4BF2-9C4F-0EADC963A80C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
