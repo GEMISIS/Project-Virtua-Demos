@@ -20,10 +20,6 @@ void handleInput(World* world, OculusRift* rift, Kinect1* kinect, Math::vec3 &po
 	if (rift->isConnected())
 	{
 		rift->Update();
-
-		rotation.x = -rift->GetRotation().x * M_PI / 180.0f;
-		rotation.y = -rift->GetRotation().y * M_PI / 180.0f + M_PI;
-		rotation.z = -rift->GetRotation().z * M_PI / 180.0f;
 	}
 
 	const NUI_SKELETON_DATA skeleton = kinect->getMainPerson();
@@ -53,27 +49,33 @@ void handleInput(World* world, OculusRift* rift, Kinect1* kinect, Math::vec3 &po
 
 	if ((1 << 16) & GetAsyncKeyState(VK_LEFT))
 	{
+		rift->DismissWarningScreen();
 		rotation.y += 1.0f * (float)M_PI / 180.0f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_RIGHT))
 	{
+		rift->DismissWarningScreen();
 		rotation.y -= 1.0f * (float)M_PI / 180.0f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_SPACE))
 	{
+		rift->DismissWarningScreen();
 		position.y += 0.1f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_RETURN))
 	{
+		rift->DismissWarningScreen();
 		position.y -= 0.1f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_UP))
 	{
+		rift->DismissWarningScreen();
 		position.x += sin(rotation.y);
 		position.z += cos(rotation.y);
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_DOWN))
 	{
+		rift->DismissWarningScreen();
 		position.x -= sin(rotation.y);
 		position.z -= cos(rotation.y);
 	}
@@ -92,6 +94,7 @@ void drawGLScene(unsigned int program, World* world)
 
 int main()
 {
+	InitRift();
 	World* world = new World();
 
 	Window testWindow;
@@ -123,20 +126,20 @@ int main()
 
 	srand(time(NULL));
 
-	world->addObject("ground", "test2.obj", "test2.bullet");
+	world->addObject("ground", "room.obj", "test2.bullet");
 	world->addObject("box", "box.obj", "box.bullet");
 	world->setObjectPosition("box", 2, 20, 0);
 	world->addObject("leftHand", "hand.obj", "hand.bullet");
-	world->setObjectPosition("leftHand", 2, 20, 0);
+	world->setObjectPosition("leftHand", 2, -200, 0);
 	world->addObject("rightHand", "hand.obj", "hand.bullet");
-	world->setObjectPosition("rightHand", -2, 20, 0);
+	world->setObjectPosition("rightHand", -2, -200, 0);
 	for (long double i = 0; i < 10; i += 1)
 	{
 		std::string name = "ball";
 		std::string temp = std::to_string(i);
 		name.append(temp);
 		world->addObject(name.c_str(), "test.obj", "test.bullet");
-		world->setObjectPosition(name.c_str(), 0, 20
+		world->setObjectPosition(name.c_str(), 0, 1
 			, rand() % 2);
 		world->setObjectElasticity(name.c_str(), 0.75f);
 	}
@@ -147,10 +150,12 @@ int main()
 
 		if ((1 << 16) & GetAsyncKeyState(VK_BACK))
 		{
+			rift.DismissWarningScreen();
 			world->setObjectVelocity("box", 1, 1, 1);
 		}
 		if ((1 << 16) & GetAsyncKeyState(VK_DELETE))
 		{
+			rift.DismissWarningScreen();
 			world->setObjectVelocity("box", -1, -1, -1);
 		}
 

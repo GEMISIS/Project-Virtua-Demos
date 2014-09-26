@@ -26,9 +26,9 @@ void handleInput(OculusRift* rift, Kinect1* kinect, Math::vec3 &position, Math::
 	if (rift->isConnected())
 	{
 		rift->Update();
-		rotation.x = -rift->GetRotation().x * (float)M_PI / 180.0f;
-		rotation.y = -rift->GetRotation().y *(float)M_PI / 180.0f;
-		rotation.z = -rift->GetRotation().z *(float)M_PI / 180.0f;
+		rotation.x = -rift->GetRotation().pitch * (float)M_PI / 180.0f;
+		rotation.y = -rift->GetRotation().yaw *(float)M_PI / 180.0f;
+		rotation.z = -rift->GetRotation().roll *(float)M_PI / 180.0f;
 	}
 
 	const NUI_SKELETON_DATA skeleton = kinect->getMainPerson();
@@ -44,19 +44,23 @@ void handleInput(OculusRift* rift, Kinect1* kinect, Math::vec3 &position, Math::
 
 	if ((1 << 16) & GetAsyncKeyState(VK_LEFT))
 	{
+		rift->DismissWarningScreen();
 		rotation.y += 1.0f * (float)M_PI / 180.0f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_RIGHT))
 	{
+		rift->DismissWarningScreen();
 		rotation.y -= 1.0f * (float)M_PI / 180.0f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_UP))
 	{
+		rift->DismissWarningScreen();
 		position.x += sin(rotation.y);
 		position.z += cos(rotation.y);
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_DOWN))
 	{
+		rift->DismissWarningScreen();
 		position.x -= sin(rotation.y);
 		position.z -= cos(rotation.y);
 	}
@@ -90,6 +94,7 @@ void drawGLScene(unsigned int program, Math::Matrix<float> perspectiveMatrix, Ma
 
 int main()
 {
+	InitRift();
 	Window testWindow;
 	Math::Matrix<float> perspectiveMatrix(4, 4);
 	Math::Matrix<float> viewMatrix(4, 4);

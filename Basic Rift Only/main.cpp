@@ -14,19 +14,21 @@ void handleInput(OculusRift* rift, Math::vec3 &position, Math::vec3 &rotation)
 	if (rift->isConnected())
 	{
 		rift->Update();
-		rotation.x = -rift->GetRotation().x * (float)M_PI / 180.0f;
-		rotation.y = -rift->GetRotation().y *(float)M_PI / 180.0f;
-		rotation.z = -rift->GetRotation().z *(float)M_PI / 180.0f;
+		rotation.x = -rift->GetRotation().pitch * (float)M_PI / 180.0f;
+		rotation.y = -rift->GetRotation().yaw *(float)M_PI / 180.0f;
+		rotation.z = -rift->GetRotation().roll *(float)M_PI / 180.0f;
 	}
 	// Use keyboard keys for rotation otherwise.
 	else
 	{
 		if (65536 & GetAsyncKeyState(VK_LEFT))
 		{
+			rift->DismissWarningScreen();
 			rotation.y += 1.0f * (float)M_PI / 180.0f;
 		}
 		if (65536 & GetAsyncKeyState(VK_RIGHT))
 		{
+			rift->DismissWarningScreen();
 			rotation.y -= 1.0f * (float)M_PI / 180.0f;
 		}
 	}
@@ -34,11 +36,13 @@ void handleInput(OculusRift* rift, Math::vec3 &position, Math::vec3 &rotation)
 	// Move with keyboard keys.
 	if (65536 & GetAsyncKeyState(VK_UP))
 	{
+		rift->DismissWarningScreen();
 		position.x += sin(rotation.y);
 		position.z += cos(rotation.y);
 	}
 	if (65536 & GetAsyncKeyState(VK_DOWN))
 	{
+		rift->DismissWarningScreen();
 		position.x -= sin(rotation.y);
 		position.z -= cos(rotation.y);
 	}
@@ -67,6 +71,7 @@ void drawGLScene(unsigned int program, Math::Matrix<float> perspectiveMatrix, Ma
 
 int main()
 {
+	InitRift();
 	//Setup a test window.
 	Window testWindow;
 	testWindow.create(L"Project Virtua - Basic Rift Only");
@@ -83,7 +88,7 @@ int main()
 	OculusRift rift(false, testWindow.renderingContext, testWindow.windowHandle, testWindow.deviceContext);
 
 	// Load the test model for the floor.
-	floorModel = new WavefrontObject("test.obj");
+	floorModel = new WavefrontObject("test2.obj");
 
 	//Matrices to handle camera view and warping for OculusRift
 	Math::Matrix<float> perspectiveMatrix(4, 4);
