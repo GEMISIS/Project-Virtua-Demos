@@ -23,12 +23,18 @@ void handleInput(OculusRift* rift, Math::vec3 &position, Math::vec3 &rotation)
 	{
 		if (65536 & GetAsyncKeyState(VK_LEFT))
 		{
-			rift->DismissWarningScreen();
+			if (rift->isConnected())
+			{
+				rift->DismissWarningScreen();
+			}
 			rotation.y += 1.0f * (float)M_PI / 180.0f;
 		}
 		if (65536 & GetAsyncKeyState(VK_RIGHT))
 		{
-			rift->DismissWarningScreen();
+			if (rift->isConnected())
+			{
+				rift->DismissWarningScreen();
+			}
 			rotation.y -= 1.0f * (float)M_PI / 180.0f;
 		}
 	}
@@ -36,13 +42,19 @@ void handleInput(OculusRift* rift, Math::vec3 &position, Math::vec3 &rotation)
 	// Move with keyboard keys.
 	if (65536 & GetAsyncKeyState(VK_UP))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		position.x += sin(rotation.y);
 		position.z += cos(rotation.y);
 	}
 	if (65536 & GetAsyncKeyState(VK_DOWN))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		position.x -= sin(rotation.y);
 		position.z -= cos(rotation.y);
 	}

@@ -49,33 +49,51 @@ void handleInput(World* world, OculusRift* rift, Kinect1* kinect, Math::vec3 &po
 
 	if ((1 << 16) & GetAsyncKeyState(VK_LEFT))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		rotation.y += 1.0f * (float)M_PI / 180.0f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_RIGHT))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		rotation.y -= 1.0f * (float)M_PI / 180.0f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_SPACE))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		position.y += 0.1f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_RETURN))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		position.y -= 0.1f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_UP))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		position.x += sin(rotation.y);
 		position.z += cos(rotation.y);
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_DOWN))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		position.x -= sin(rotation.y);
 		position.z -= cos(rotation.y);
 	}
@@ -109,6 +127,7 @@ int main()
 	MSG msg;
 
 	testWindow.create(L"Project Virtua - Holodeck");
+	testWindow.SetFullscreen(true);
 	testWindow.setWindowDrawingStateGL();
 	testWindow.setVisible(true);
 
@@ -133,6 +152,7 @@ int main()
 	world->setObjectPosition("leftHand", 2, -200, 0);
 	world->addObject("rightHand", "hand.obj", "hand.bullet");
 	world->setObjectPosition("rightHand", -2, -200, 0);
+	/*
 	for (long double i = 0; i < 10; i += 1)
 	{
 		std::string name = "ball";
@@ -143,6 +163,7 @@ int main()
 			, rand() % 2);
 		world->setObjectElasticity(name.c_str(), 0.75f);
 	}
+	*/
 
 	while (1)
 	{

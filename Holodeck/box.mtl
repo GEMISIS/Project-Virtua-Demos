@@ -9,5 +9,5 @@ Ks 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-map_Bump C:\\Users\\GEMISIS\\Downloads\\box_0\\box texture.png
-map_Kd C:\\Users\\GEMISIS\\Downloads\\box_0\\box texture.png
+map_Bump box texture.png
+map_Kd box texture.png

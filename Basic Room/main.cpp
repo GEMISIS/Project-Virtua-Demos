@@ -44,23 +44,35 @@ void handleInput(OculusRift* rift, Kinect1* kinect, Math::vec3 &position, Math::
 
 	if ((1 << 16) & GetAsyncKeyState(VK_LEFT))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		rotation.y += 1.0f * (float)M_PI / 180.0f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_RIGHT))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		rotation.y -= 1.0f * (float)M_PI / 180.0f;
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_UP))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		position.x += sin(rotation.y);
 		position.z += cos(rotation.y);
 	}
 	if ((1 << 16) & GetAsyncKeyState(VK_DOWN))
 	{
-		rift->DismissWarningScreen();
+		if (rift->isConnected())
+		{
+			rift->DismissWarningScreen();
+		}
 		position.x -= sin(rotation.y);
 		position.z -= cos(rotation.y);
 	}
